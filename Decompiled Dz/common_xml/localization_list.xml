@@ -1,0 +1,29 @@
+<List>
+	<Russian 	  Index="rus"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="16" SteamID="0"  />
+	<English 	  Index="eng"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="1"  SteamID="1"  />
+	<German  	  Index="ger"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="3"  SteamID="2"  />
+	<Italya  	  Index="ita"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="5"  SteamID="3"  />
+	<France  	  Index="fre"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="2"  SteamID="4"  />
+	<Spanish 	  Index="spa"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="4"  SteamID="5"  />
+	<Turkie    	  Index="tur"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="8"  SteamID="6"  />
+	<Portugal  	  Index="por"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="6"  SteamID="7"  />
+	<Japan     	  Index="jap"  FontName="./Fonts/MSJhengHeiBold.ttf"  	MarmaladeID="23" SteamID="8"  />
+	<Korean    	  Index="kor"  FontName="./Fonts/UnDotum.ttf" 			MarmaladeID="26" SteamID="9"  />
+	<TradChinese  Index="chi1" FontName="./Fonts/MSJhengHeiBold.ttf"  	MarmaladeID="25" SteamID="10" />
+	<SimplChinese Index="chi2" FontName="./Fonts/MSJhengHeiBold.ttf"  	MarmaladeID="24" SteamID="11" />
+	<Vietnamese   Index="viet" FontName="./Fonts/corbelb.ttf" 			MarmaladeID="76" SteamID="12" />
+	<Hindi 		  Index="hin"  FontName="./Fonts/aparaj.ttf" 			MarmaladeID="48" SteamID="13" />
+	<Arabic 	  Index="arab" FontName="./Fonts/MYRIADARABIC-BOLD.otf" MarmaladeID="33" SteamID="14" />
+	<Hebrew 	  Index="heb"  FontName="./Fonts/Arial.ttf" 			MarmaladeID="47" SteamID="15" />
+	<Thai 		  Index="thai" FontName="./Fonts/angsa.ttf" 			MarmaladeID="29" SteamID="16" />
+	<Polish 	  Index="pol"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="15" SteamID="17" />
+	<Czech 		  Index="cze"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="10" SteamID="18" />
+	<Latvian 	  Index="lat"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="55" SteamID="19" />
+	<Dutch 		  Index="dut"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="7"  SteamID="20" />
+	<Norwegian 	  Index="nor"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="14" SteamID="21" />
+	<Danish 	  Index="dan"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="11" SteamID="22" />
+	<Finnish 	  Index="finn" FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="12" SteamID="23" />
+	<Swedish 	  Index="swe"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="20" SteamID="24" />
+	<Ukranian 	  Index="ukr"  FontName="./Fonts/Arial.ttf"             MarmaladeID="21" SteamID="25" />
+	<Greek 		  Index="gre"  FontName="./Fonts/Play-Bold.ttf" 		MarmaladeID="22" SteamID="26" />
+</List>
