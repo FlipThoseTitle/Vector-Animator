@@ -1,12 +1,12 @@
 # Vector Blender Animation
-Blender scenes and addon to animate custom animations for Vector.
+Cascadeur, Blender scenes and addon to animate custom animations for Vector.
 
 ## About The Addon
 Vector Animation addon let you import decompiled animation bin from the game into Blender, and export animation into .bindec to compile and use in-game.
 This project also includes rig and sample scene.
 
 ## Getting Started
-This project required Vectorier Unity Editor to work along with - [Download Vectorier Unity Editor project](https://github.com/DoritoTheChips/Vectorier-Unity-Editor/archive/refs/heads/main.zip)
+This project required Vectorier Unity Editor to work along with - [Download Vectorier Unity Editor project](https://github.com/FlipThoseTitle/Vectorier-Unity-Editor/archive/refs/heads/main.zip)
 
 
 ### Addon Installation
@@ -23,22 +23,71 @@ To install the VectorAnimation addon:
 The Vector Animation panel should appear now. If not, press N to view the side panel. There should be two options for exporting and importing.
 
 ## Usage
-Project includes 2 rig, sample animation, fbx file and necessary decompiled dz folder.
- * Vector Rig with armature (main one for animating and export)
- * Vector rig with node only (only for importing animation)
+Project includes 3 rig, sample animation, fbx file and necessary decompiled dz folder.
+ * Vector Rig Cascadeur (for animating in cascadeur)
+ * Vector Rig with armature blender scene (for animating in blender)
+ * Vector Rig with node only (only for importing animation)
  * Vector node fbx
  * 1 Custom Animation (Backslide)
 
+Blender Rig:
+
 ![image](https://github.com/FlipThoseTitle/Vector-Animator/assets/115728514/cc387d4e-d0e7-4cd6-8cc2-fc59cb2bd56d)
+
+Cascadeur Rig:
+
+![image](https://github.com/user-attachments/assets/6dc79ff1-191c-4be9-a74a-6a0ee6a09e5e)
+
 
 ### Exporting & Importing
 **Exporting:**
- * After you've installed the addon, simply open the main rig to start animating. Once you're done, you can export into .bindec and compile the bindec in Unity using Vectorier.
+ * After you've installed the addon, simply open the blender scene or cascadeur scene to start animating. Once you're done, you can export into .bindec and compile the bindec in Unity using Vectorier.
 
 **Importing:**
  * It is recommended to use Vector Rig Node Only version.
  * To import animation, you have to decompile .bin using Vectorier first. The project should also comes with the decompiled vector animation dz folder.
  * Click import animation, you can now choose the .bindec you've decompiled to import the animation into blender.
+
+# Animating in Cascadeur
+As Cascadeur is required for this method, you need to download Cascadeur at their webstite - [Download Cascadeur](https://cascadeur.com)
+
+And download the CSC Bridge plugin for Blender - [Download CSC Bridge](https://github.com/arcsikex/cascadeur_bridge)
+
+Create your account in Cascadeur. Once you've entered the program, go to Help > Claim indie license, now you can export your animations to blender. (Note that this only lasts for 14 days, so when the time is over, you either create a new account or animate in blender)
+
+![image](https://github.com/user-attachments/assets/5ed79ddc-5848-4951-a130-030de7f6ae41)
+
+You can now open the Vector Cascadeur Rig Scene using Cascadeur and start animating. (search for tutorials if you don't know how to animate in cascadeur)
+
+![image](https://github.com/user-attachments/assets/1265c883-56fc-4dbe-8fcd-02185b67b66c)
+
+### Installing CSC Bridge Addon in Blender
+Once your animation is done, you need to export it to blender, to do that we have to use the CSC Bridge.
+
+To install it go to Blender, Edit> Preferences> Add-Ons And Install, select the zip file you've downloaded.
+
+Once you've done that, the CSC Bridge addon will appear. Select your Cascadeur Executable (cascadeur.exe) and click install requirements, and you're done.
+
+![image](https://github.com/user-attachments/assets/f44c6c1b-eab1-462c-8b8a-a36949f70a5c)
+
+### Importing your Cascadeur animation to Blender
+Go to the bar on the right side of your screen. If it's not there, press N on your keyboard and the side menu will pop up. Select CSC Bridge and copy these parameters onto the Blender Import Setting.
+
+![image](https://github.com/user-attachments/assets/93474e6f-1e1f-4007-aa29-6419563f1a00)
+
+Once you've done that, click "Save settings" and import your scene. After that, you can follow the Blender Animation Method for exporting to bindec and etc.
+
+Congrats! you now have your Cascadeur animation.
+
+Sample Animation:
+
+https://github.com/user-attachments/assets/746bc19a-5dd0-4f55-a152-3c35e32059a7
+
+### Tips
+To see if your animation is looking good on Cascadeur, you can go to the joint mode by pressing C on your keyboard (or by selecting joint mode in the top left bar)
+
+Addtionally, while in this mode you can make the rig open its hand by rotating the bone NFingertips1 or NFingertips2.
+![Untitled video - Made with Clipchamp (1)](https://github.com/user-attachments/assets/1ff77f71-0ac2-4379-ad82-add8e0526174)
 
 # Setting up
 Setting up your animation to work in-game, requires many step to follow through. This will be a tutorial on how you can add your animation into the game.
@@ -165,6 +214,9 @@ Instead of adding config to objects.xml, we're going to add a more customizable 
 5. Buildmap and test the animation in-game. Where the animation will trigger depends on your trigger sprite size.
 
 This should concludes the tutorial on how to add your own animation into vector, Have fun animating!
-Note: Rig may not the best, as I have never rig in blender before. Feel free to improve upon it.
+Note: Blender Rig may not the best, as I have never rig in blender before. Feel free to improve upon it.
 
 ![image](https://github.com/FlipThoseTitle/Vector-Animator/assets/115728514/8c058df8-da9d-43d7-b11e-40b22fd22022)
+
+![image](https://github.com/user-attachments/assets/4ac6d8d5-c25c-4cb3-b4c6-1e7fb3211e86)
+
