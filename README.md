@@ -87,6 +87,7 @@ https://github.com/user-attachments/assets/746bc19a-5dd0-4f55-a152-3c35e32059a7
 To see if your animation is looking good on Cascadeur, you can go to the joint mode by pressing C on your keyboard (or by selecting joint mode in the top left bar)
 
 Addtionally, while in this mode you can make the rig open its hand by rotating the bone NFingertips1 or NFingertips2.
+
 ![Untitled video - Made with Clipchamp (1)](https://github.com/user-attachments/assets/1ff77f71-0ac2-4379-ad82-add8e0526174)
 
 # Setting up
