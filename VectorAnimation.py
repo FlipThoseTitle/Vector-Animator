@@ -60,7 +60,7 @@ def import_bindec(filepath):
     with open(filepath, 'r') as file:
         lines = file.readlines()
 
-    # get number of binary blocks from the first line
+    # Get the number of binary blocks from the first line
     if lines[0].startswith("Binary blocks count:"):
         binary_blocks_count = int(lines[0].split(":")[1].strip())
     else:
@@ -74,32 +74,36 @@ def import_bindec(filepath):
         line = lines[frame_index].strip()
         frame_index += 1
 
-        if line.startswith("[46]{") and line.endswith("}END"):
-            line = line.replace("[46]{", "").replace("}END", "")
-            positions_str = line.split("}{")
-            positions = [p.split(",") for p in positions_str]
+        if line.startswith("[") and line.endswith("END"):
+            # Extract the positions data between the braces
+            try:
+                positions_str = line[line.index("{") + 1:line.rindex("}")].split("}{")
+                positions = [p.split(",") for p in positions_str[:46]]  # Only take the first 46 positions
 
-            if len(positions) != len(NODEPOINT_ORDER):
+                if len(positions) < 46:
+                    # Fill in the missing positions with default values if necessary
+                    positions += [["0", "0", "0"]] * (46 - len(positions))
+
+                # Move node points directly
+                for i, name in enumerate(NODEPOINT_ORDER):
+                    obj = bpy.data.objects.get(name)
+                    if obj:
+                        # Transform coordinates to be correct
+                        x = float(positions[i][0])
+                        z = -float(positions[i][1])
+                        y = float(positions[i][2])
+
+                        pos = (x, y, z)
+                        obj.location = pos
+
+                        obj.keyframe_insert(data_path="location", frame=frame)
+            except ValueError:
+                print(f"Error processing line {frame_index}: {line}")
                 continue
-
-            # move node points directly
-            for i, name in enumerate(NODEPOINT_ORDER):
-                obj = bpy.data.objects.get(name)
-                if obj:
-                    
-                    # transform coordinates to be correct
-                    x = float(positions[i][0])
-                    z = -float(positions[i][1])
-                    y = float(positions[i][2])
-
-                    pos = (x, y, z)
-                    obj.location = pos
-
-                    obj.keyframe_insert(data_path="location", frame=frame)
 
     scene.frame_end = scene.frame_start + binary_blocks_count
     scene.frame_set(scene.frame_start)
-
+    
 # Operator to export node point positions
 class ExportBindecOperator(bpy.types.Operator):
     bl_idname = "export.bindec"
