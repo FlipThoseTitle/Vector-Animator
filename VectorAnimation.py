@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Vector Animation",
     "author": "FlipThoseTitle",
-    "version": (1, 1),
+    "version": (1, 2),
     "blender": (2, 28, 0),
     "location": "View3D > N",
     "description": "Addons for Vector Animation",
@@ -23,8 +23,23 @@ NODEPOINT_ORDER = [
     "NHeadS_2", "NHeadF", "NPivot", "DetectorH", "DetectorV", "COM", "Camera"
 ]
 
+# limbs order for SF2
+NODEPOINT_ORDER_SF2 = [
+    "NTop", "NNeck", "NShoulder_2", "NShoulder_1", "NElbow_2", "NElbow_1", "NWrist_2", "NWrist_1",
+    "NFingertipsSS_2", "NFingertipsSS_1", "NHip_2", "NHip_1", "NKnee_2", "NKnee_1", "NAnkle_2", 
+    "NAnkle_1", "NToe_2", "NToe_1", "NPivot", "Weapon-Node1_1", "Weapon-Node2_1", "Weapon-Node3_1", 
+    "Weapon-Node4_1", "Weapon-Node1_2", "Weapon-Node2_2", "Weapon-Node3_2", "Weapon-Node4_2", 
+    "NStomach", "NChest", "NToeTip_2", "NHeel_2", "NHeel_1", "NToeS_2", "NToeTip_1", "NToeS_1", 
+    "NKnuckles_2", "NKnucklesS_2", "NKnuckles_1", "NKnucklesS_1", "NFingertips_2", "NFingertips_1", 
+    "NFingertipsS_2", "NFingertipsS_1", "NHead", "NChestS_2", "NChestS_1", "NStomachS_2", 
+    "NStomachS_1", "NChestF", "NStomachF", "NPelvisF", "NHeadS_2", "NHeadS_1", "NHeadF", "COM", 
+    "MacroNode1_2", "MacroNode2_2", "MacroNode3_2", "MacroNode4_2", "MacroNode5_2", "MacroNode6_2", 
+    "MacroNode1_1", "MacroNode2_1", "MacroNode3_1", "MacroNode4_1", "MacroNode5_1", "MacroNode6_1"
+]
+
+
 # export node point positions to .bindec file
-def export_bindec(filepath):
+def export_bindec(filepath, nodepoint_order, limit=46):
     scene = bpy.context.scene
     start_frame = scene.frame_start
     end_frame = scene.frame_end
@@ -36,7 +51,7 @@ def export_bindec(filepath):
         scene.frame_set(frame)
         positions = []
 
-        for name in NODEPOINT_ORDER:
+        for name in nodepoint_order[:limit]:  # Use the limit to slice the node order
             obj = bpy.data.objects.get(name)
             if obj:
                 pos = obj.matrix_world.translation
@@ -47,7 +62,7 @@ def export_bindec(filepath):
             else:
                 positions.append("0,0,0")
 
-        line = f"[46]{{{'}{'.join(positions)}}}END"
+        line = f"[{limit}]{{{'}{'.join(positions)}}}END"
         lines.append(line)
 
     with open(filepath, 'w') as file:
@@ -56,7 +71,7 @@ def export_bindec(filepath):
             file.write(f"{line}\n")
 
 # import .bindec file
-def import_bindec(filepath):
+def import_bindec(filepath, nodepoint_order, limit=46):
     with open(filepath, 'r') as file:
         lines = file.readlines()
 
@@ -78,14 +93,14 @@ def import_bindec(filepath):
             # Extract the positions data between the braces
             try:
                 positions_str = line[line.index("{") + 1:line.rindex("}")].split("}{")
-                positions = [p.split(",") for p in positions_str[:46]]  # Only take the first 46 positions
+                positions = [p.split(",") for p in positions_str[:limit]]  # Use the limit to slice positions
 
-                if len(positions) < 46:
+                if len(positions) < limit:
                     # Fill in the missing positions with default values if necessary
-                    positions += [["0", "0", "0"]] * (46 - len(positions))
+                    positions += [["0", "0", "0"]] * (limit - len(positions))
 
                 # Move node points directly
-                for i, name in enumerate(NODEPOINT_ORDER):
+                for i, name in enumerate(nodepoint_order[:limit]):  # Use nodepoint_order with limit
                     obj = bpy.data.objects.get(name)
                     if obj:
                         # Transform coordinates to be correct
@@ -119,7 +134,7 @@ class ExportBindecOperator(bpy.types.Operator):
     def execute(self, context):
         if not self.filepath.endswith(".bindec"):
             self.filepath += ".bindec"
-        export_bindec(self.filepath)
+        export_bindec(self.filepath, NODEPOINT_ORDER)
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -128,6 +143,34 @@ class ExportBindecOperator(bpy.types.Operator):
         
         #   default file path
         self.filepath = bpy.path.abspath("//") + scene_name + ".bindec"
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+    
+# Operator to export node point positions (SF2)
+class ExportBindecSF2Operator(bpy.types.Operator):
+    bl_idname = "export.bindec_sf2"
+    bl_label = "Export Bindec (SF2)"
+    bl_description = "Export the positions of node points (SF2) in every frame to a .bindec file"
+
+    filepath: bpy.props.StringProperty(
+        name="File Path",
+        description="Filepath used for exporting the .bindec file",
+        subtype="FILE_PATH"
+    )
+
+    def execute(self, context):
+        if not self.filepath.endswith(".bindec"):
+            self.filepath += ".bindec"
+        export_bindec(self.filepath, NODEPOINT_ORDER_SF2, limit=67)  # Export with limit 67 for SF2
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        scene_name = bpy.path.basename(bpy.context.blend_data.filepath)
+        scene_name = os.path.splitext(scene_name)[0]
+
+        # default file path
+        self.filepath = bpy.path.abspath("//") + scene_name + "_sf2.bindec"
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -145,12 +188,35 @@ class ImportBindecOperator(bpy.types.Operator):
     )
 
     def execute(self, context):
-        import_bindec(self.filepath)
+        import_bindec(self.filepath, NODEPOINT_ORDER)  # Pass NODEPOINT_ORDER to the function
         return {'FINISHED'}
 
     def invoke(self, context, event):
         # Set the default file path
         self.filepath = bpy.path.abspath("//")  # Start with current blend file directory
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+# Operator to import node point positions (SF2)
+class ImportBindecSF2Operator(bpy.types.Operator):
+    bl_idname = "import.bindec_sf2"
+    bl_label = "Import Bindec (SF2)"
+    bl_description = "Import positions of node points (SF2) from a .bindec file"
+
+    filepath: bpy.props.StringProperty(
+        name="File Path",
+        description="Filepath used for importing the .bindec file",
+        subtype="FILE_PATH"
+    )
+
+    def execute(self, context):
+        import_bindec(self.filepath, NODEPOINT_ORDER_SF2, limit=67)  # Pass NODEPOINT_ORDER_SF2 and limit
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        # Set the default file path
+        self.filepath = bpy.path.abspath("//")  # Start with the current blend file directory
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -167,15 +233,21 @@ class VIEW3D_PT_bindec_export_panel(bpy.types.Panel):
         layout = self.layout
         layout.operator(ExportBindecOperator.bl_idname, icon='ARMATURE_DATA')
         layout.operator(ImportBindecOperator.bl_idname, icon='OUTLINER_OB_ARMATURE')
+        layout.operator(ExportBindecSF2Operator.bl_idname, icon='ARMATURE_DATA')
+        layout.operator(ImportBindecSF2Operator.bl_idname, icon='OUTLINER_OB_ARMATURE')
 
 def register():
     bpy.utils.register_class(ExportBindecOperator)
     bpy.utils.register_class(ImportBindecOperator)
+    bpy.utils.register_class(ExportBindecSF2Operator)
+    bpy.utils.register_class(ImportBindecSF2Operator)
     bpy.utils.register_class(VIEW3D_PT_bindec_export_panel)
 
 def unregister():
     bpy.utils.unregister_class(ExportBindecOperator)
     bpy.utils.unregister_class(ImportBindecOperator)
+    bpy.utils.unregister_class(ExportBindecSF2Operator)
+    bpy.utils.unregister_class(ImportBindecSF2Operator)
     bpy.utils.unregister_class(VIEW3D_PT_bindec_export_panel)
 
 if __name__ == "__main__":
