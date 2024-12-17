@@ -12,7 +12,7 @@ This project required Vectorier Unity Editor to work along with - [Download Vect
 ### Addon Installation
 ![image](https://github.com/FlipThoseTitle/Vector-Animator/assets/115728514/b78f665b-a5ae-4663-b26a-65ca138ac3e6)
 
-**It is recommended to use blender 4.0+**
+**Addon will not work under blender 2.8**
 
 To install the VectorAnimation addon:
  * Go into the blender preferences, by clicking on Main Header>Edit>Preferences
