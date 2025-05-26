@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Vector Animation",
     "author": "FlipThoseTitle",
-    "version": (1, 2),
+    "version": (1, 3),
     "blender": (2, 28, 0),
     "location": "View3D > N",
     "description": "Addons for Vector Animation",
@@ -11,6 +11,7 @@ bl_info = {
 import bpy
 import os
 import mathutils
+import xml.etree.ElementTree as ET
 
 # limbs order
 NODEPOINT_ORDER = [
@@ -119,6 +120,56 @@ def import_bindec(filepath, nodepoint_order, limit=46):
     scene.frame_end = scene.frame_start + binary_blocks_count
     scene.frame_set(scene.frame_start)
     
+def xml_to_bindec_string(xml_path, nodepoint_order=NODEPOINT_ORDER):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    frame_count = int(root.attrib.get('Count', 0))
+    lines = [f"Binary blocks count: {frame_count}"]
+    # Each frame is a child element
+    for frame in root.findall('Frame_1/..'):
+        # Actually root.findall('Frame') won't work; use direct iteration
+        pass
+    # Correct iteration:
+    lines = [f"Binary blocks count: {frame_count}"]
+    for frame_elem in list(root):
+        nodes = frame_elem.findall('Node')
+        positions = [f"{{{n.attrib['X']},{n.attrib['Y']},{n.attrib['Z']}}}" for n in nodes]
+        lines.append(f"[{len(nodes)}]" + "".join(positions) + "END")
+    return "\n".join(lines)
+
+# Helper: import from bindec text
+
+def import_bindec_from_string(bindec_text, nodepoint_order, limit=46):
+    lines = bindec_text.splitlines()
+    if not lines or not lines[0].startswith("Binary blocks count:"):
+        return {'CANCELLED'}
+    binary_blocks_count = int(lines[0].split(":")[1].strip())
+    scene = bpy.context.scene
+    frame_index = 1
+    for frame in range(scene.frame_start, scene.frame_start + binary_blocks_count):
+        line = lines[frame_index].strip()
+        frame_index += 1
+        if line.startswith("[") and line.endswith("END"):
+            try:
+                pos_str = line[line.index("{") + 1:line.rindex("}")]
+                parts = pos_str.split("}{")[:limit]
+                positions = [p.split(",") for p in parts]
+                # pad if needed
+                if len(positions) < limit:
+                    positions += [["0", "0", "0"]] * (limit - len(positions))
+                for i, name in enumerate(nodepoint_order[:limit]):
+                    obj = bpy.data.objects.get(name)
+                    if obj:
+                        x = float(positions[i][0])
+                        z = -float(positions[i][1])
+                        y = float(positions[i][2])
+                        obj.location = (x, y, z)
+                        obj.keyframe_insert(data_path="location", frame=frame)
+            except ValueError:
+                continue
+    scene.frame_end = scene.frame_start + binary_blocks_count
+    scene.frame_set(scene.frame_start)
+
 # Operator to export node point positions
 class ExportBindecOperator(bpy.types.Operator):
     bl_idname = "export.bindec"
@@ -178,24 +229,27 @@ class ExportBindecSF2Operator(bpy.types.Operator):
 # Operator to import node point positions
 class ImportBindecOperator(bpy.types.Operator):
     bl_idname = "import.bindec"
-    bl_label = "Import Bindec"
-    bl_description = "Import positions of node points from a .bindec file"
+    bl_label = "Import Bindec or XML"
+    bl_description = "Import positions of node points from a .bindec or .xml file"
 
     filepath: bpy.props.StringProperty(
         name="File Path",
-        description="Filepath used for importing the .bindec file",
+        description="Filepath used for importing the file",
         subtype="FILE_PATH"
     )
 
     def execute(self, context):
-        import_bindec(self.filepath, NODEPOINT_ORDER)  # Pass NODEPOINT_ORDER to the function
+        ext = os.path.splitext(self.filepath)[1].lower()
+        if ext == '.xml':
+            bindec_text = xml_to_bindec_string(self.filepath, NODEPOINT_ORDER)
+            import_bindec_from_string(bindec_text, NODEPOINT_ORDER)
+        else:
+            import_bindec(self.filepath, NODEPOINT_ORDER)
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        # Set the default file path
-        self.filepath = bpy.path.abspath("//")  # Start with current blend file directory
-        wm = context.window_manager
-        wm.fileselect_add(self)
+        self.filepath = bpy.path.abspath("//")
+        context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
 # Operator to import node point positions (SF2)
