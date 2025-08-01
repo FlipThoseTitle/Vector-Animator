@@ -1,3 +1,5 @@
+# ARCHIVED - PLEASE VISIT [GYMNAST TOOL SUITE](https://github.com/FlipThoseTitle/Gymnast-Tool-Suite) INSTEAD
+
 # Vector Blender Animation
 Cascadeur, Blender scenes and addon to animate custom animations for Vector.
 
